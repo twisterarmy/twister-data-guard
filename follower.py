@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Auto-following/reading bot written in Python 2 that has a mission to safe distributed data shared in the twister network
+# Auto-following/reading bot written in Python 2 has a mission to safe distributed data shared in the twister network
 # (https://github.com/twisterarmy/twister-data-guard)
 # This script based on the official usernameCrawler
 # (https://github.com/miguelfreitas/twister-core/blob/master/contrib/usernameCrawler.py)
@@ -11,9 +11,10 @@
 
 import sys, cPickle
 
-dbFileName   = "twisterDataGuard.pickle"
-nodeUserName = "twisterdataguard"
-blocksInStep = 100
+dbFileName    = "twisterDataGuard.pickle" # service database file
+nodeUserName  = "twisterdataguard"        # twister wallet (user)
+blocksInStep  = 100                       # mlocks processing by the one step
+squattersStop = 20                        # max users per block. Reset the blocksInStep on this quantity to prevent CPU overload
 
 class MyDb:
     lastBlockHash = 0
@@ -52,7 +53,12 @@ if not dataLock:
         block = twister.getblock(nextHash)
         db.lastBlockHash = block["hash"]
 
+        if squattersStop < 0:
+            db.dataLock = False
+            break
+
         blocksInStep = blocksInStep - 1
+
         if blocksInStep < 0:
             db.dataLock = False
             break
@@ -62,6 +68,7 @@ if not dataLock:
         for u in block["usernames"]:
             print "follow", u
             twister.follow(nodeUserName, [u])
+            squattersStop = squattersStop - 1
         if block.has_key("nextblockhash"):
             nextHash = block["nextblockhash"]
         else:
