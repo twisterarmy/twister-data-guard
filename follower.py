@@ -13,6 +13,7 @@ import sys, cPickle
 
 dbFileName   = "twisterDataGuard.pickle"
 nodeUserName = "twisterdataguard"
+blocksInStep = 10000
 
 try:
     from bitcoinrpc.authproxy import AuthServiceProxy
@@ -39,11 +40,17 @@ except:
 print "blockchain reading..."
 
 while True:
+
     block = twister.getblock(nextHash)
     db.lastBlockHash = block["hash"]
-    print "block", str(block["height"]) + "\r",
-    usernames = block["usernames"]
-    for u in usernames:
+
+    blocksInStep = blocksInStep - 1
+    if blocksInStep < 0:
+        break
+
+    print "read block", str(block["height"]) + "\r",
+
+    for u in block["usernames"]:
         print "follow", u
         twister.follow(nodeUserName, [u])
     if block.has_key("nextblockhash"):
