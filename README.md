@@ -1,6 +1,6 @@
 # twister-data-guard
 
-Twister is a community driven microblogging platform, that have a distributed database, stored betwin the independent DHT nodes by the following relationships.  
+Twister is a community driven microblogging platform, that have a distributed database, stored between the independent DHT nodes by the following relationships.  
 
 At this moment it has a low online activity, so that toolkit writen to safe the users data as the part of the our history, memories, loses and wins.  
 
