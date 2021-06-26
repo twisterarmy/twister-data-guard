@@ -13,7 +13,7 @@ import sys, cPickle
 
 dbFileName   = "twisterDataGuard.pickle"
 nodeUserName = "twisterdataguard"
-blocksInStep = 10
+blocksInStep = 100
 
 class MyDb:
     lastBlockHash = 0
@@ -65,6 +65,7 @@ if not dataLock:
         if block.has_key("nextblockhash"):
             nextHash = block["nextblockhash"]
         else:
+            print "database is up to date..."
             break
 
     cPickle.dump(db, open(dbFileName, "w"))
