@@ -13,7 +13,11 @@ import sys, cPickle
 
 dbFileName   = "twisterDataGuard.pickle"
 nodeUserName = "twisterdataguard"
-blocksInStep = 10000
+blocksInStep = 10
+
+class MyDb:
+    lastBlockHash = 0
+    dataLock = False
 
 try:
     from bitcoinrpc.authproxy import AuthServiceProxy
@@ -27,37 +31,45 @@ if len(sys.argv) > 1:
 
 twister = AuthServiceProxy(serverUrl)
 
-class MyDb:
-    lastBlockHash = 0
-
 try:
     db = cPickle.load(open(dbFileName))
     nextHash = db.lastBlockHash
+    dataLock = db.dataLock
 except:
     db = MyDb()
     nextHash = twister.getblockhash(0)
+    dataLock = db.dataLock
 
-print "blockchain reading..."
+if not dataLock:
 
-while True:
+    db.dataLock = True
+    cPickle.dump(db, open(dbFileName, "w"))
 
-    block = twister.getblock(nextHash)
-    db.lastBlockHash = block["hash"]
+    print "blockchain reading..."
 
-    blocksInStep = blocksInStep - 1
-    if blocksInStep < 0:
-        break
+    while True:
 
-    print "read block", str(block["height"])# + "\r",
+        block = twister.getblock(nextHash)
+        db.lastBlockHash = block["hash"]
 
-    for u in block["usernames"]:
-        print "follow", u
-        twister.follow(nodeUserName, [u])
-    if block.has_key("nextblockhash"):
-        nextHash = block["nextblockhash"]
-    else:
-        break
+        blocksInStep = blocksInStep - 1
+        if blocksInStep < 0:
+            db.dataLock = False
+            break
 
-cPickle.dump(db,open(dbFileName, "w"))
+        print "read block", str(block["height"])# + "\r",
 
-print "task completed."
+        for u in block["usernames"]:
+            print "follow", u
+            twister.follow(nodeUserName, [u])
+        if block.has_key("nextblockhash"):
+            nextHash = block["nextblockhash"]
+        else:
+            break
+
+    cPickle.dump(db, open(dbFileName, "w"))
+
+    print "task completed."
+
+else:
+    print "operation locked by the running process."
