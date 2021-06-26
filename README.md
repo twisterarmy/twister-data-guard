@@ -10,4 +10,4 @@ It is a part of the community library, so if you want to partipicate - contribut
 
 1. follower.py - search and auto follow new users in the twister blockchain (completed)  
 2. reader.py - loading and auto reading public post of the followed users (todo)  
-3. publisher.py - sending the data into the DHT to make database visible for the other nodes (todo, may be integrated in 1/2 scripts)  
+3. publisher.py - sending data collected into the DHT to make database visible for the other nodes (todo, may be integrated in 1/2 scripts)  
