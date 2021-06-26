@@ -30,6 +30,8 @@ serverUrl = "http://user:pwd@127.0.0.1:28332"
 if len(sys.argv) > 1:
     serverUrl = sys.argv[1]
 
+squattersStopCurrent = squattersStop
+
 twister = AuthServiceProxy(serverUrl)
 
 try:
@@ -53,7 +55,7 @@ if not dataLock:
         block = twister.getblock(nextHash)
         db.lastBlockHash = block["hash"]
 
-        if squattersStop < 0:
+        if squattersStopCurrent < 0:
             db.dataLock = False
             break
 
@@ -65,10 +67,12 @@ if not dataLock:
 
         print "read block", str(block["height"])# + "\r",
 
+        squattersStopCurrent = squattersStop
+
         for u in block["usernames"]:
             print "follow", u
             twister.follow(nodeUserName, [u])
-            squattersStop = squattersStop - 1
+            squattersStopCurrent = squattersStopCurrent - 1
         if block.has_key("nextblockhash"):
             nextHash = block["nextblockhash"]
         else:
