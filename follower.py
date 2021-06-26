@@ -48,7 +48,7 @@ while True:
     if blocksInStep < 0:
         break
 
-    print "read block", str(block["height"]) + "\r",
+    print "read block", str(block["height"])# + "\r",
 
     for u in block["usernames"]:
         print "follow", u
