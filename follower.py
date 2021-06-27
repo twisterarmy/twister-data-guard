@@ -13,7 +13,7 @@ import sys, cPickle
 
 dbFileName    = "twisterDataGuard.pickle" # service database file
 nodeUserName  = "twisterdataguard"        # twister wallet (user)
-blocksInStep  = 100                       # mlocks processing by the one step
+blocksInStep  = 100                       # locks processing by the one step
 squattersStop = 20                        # max users per block. Reset the blocksInStep on this quantity to prevent CPU overload
 
 class MyDb:
