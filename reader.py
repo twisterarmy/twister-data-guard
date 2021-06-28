@@ -30,4 +30,4 @@ followingList = twister.getfollowing(nodeUserName)
 
 for u in followingList:
     print "reading", u, "..."
-    print twister.getposts(100000, [{"username":u}])
+    print twister.getposts(readMaxPosts, [{"username":u}])
