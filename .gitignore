@@ -1,0 +1,4 @@
+.twister/html
+.twister/db.log
+.twister/debug.log
+.twister/.lock
