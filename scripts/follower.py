@@ -17,7 +17,7 @@ blocksInStep  = 100                       # blocks processing by the one step
 squattersStop = 20                        # max users per block. Reset the blocksInStep on this quantity to prevent CPU overload
 
 class MyDb:
-    nextBlockHash = False
+    nextBlock = 0
 
 try:
     from bitcoinrpc.authproxy import AuthServiceProxy
@@ -42,7 +42,8 @@ print "blockchain reading..."
 
 while True:
 
-    block = twister.getblock(db.nextBlockHash)
+    hash  = twister.getblockhash(db.nextBlock)
+    block = twister.getblock(hash)
 
     if squattersStopCurrent < 0:
         break
@@ -63,7 +64,7 @@ while True:
 
     if block.has_key("nextblockhash"):
 
-        db.nextBlockHash = block["nextblockhash"]
+        db.nextBlock = db.nextBlock + 1
 
         print "save block state."
         cPickle.dump(db, open(dbFileName, "w"))
@@ -73,6 +74,3 @@ while True:
         break
 
 print "task completed."
-
-else:
-    print "operation locked by the running process."
