@@ -9,10 +9,17 @@ This toolkit should be runned with the interactive twister-core node, to collect
 ### Usage
 
 Add py scripts to the crontab task according to your server powers and the current network activity.  
-@ twisterdataguard node is open sourced, including the profile database and the private key for recovery needs:  
+@ twisterdataguard node is open sourced, including the profile database and the private key for data operating needs:  
+
 `KymxWUUeX7ZwEdkbVs78KAVvERBZz8YXGEfzmjqSDk68HTSXRQPa`  
-Node would be runned using the actual profile slice provided in the .twister directory with all the actual data collected.  
-File twisterDataGuard.pickle contain the latest hash of it block indexed.  
+
+Existing Node would be launched using the actual profile slice provided in the .twister directory (soon) with all the data collected and prepared by latest twisterd release.  
+Launching the new node, requires a lot of the time and/or CPU resources. Also, part of the data may be losten in DHT/BitTorrent network.  
+
+File twisterDataGuard.pickle contain the latest number of the block indexed. Will be publiched on the next profile slice.  
+
+If you have any question, visit our feedback page to get a support:  
+https://github.com/twisterarmy/twister-data-guard/issues  
 
 ### Roadmap
 
