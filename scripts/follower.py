@@ -17,8 +17,7 @@ blocksInStep  = 100                       # blocks processing by the one step
 squattersStop = 20                        # max users per block. Reset the blocksInStep on this quantity to prevent CPU overload
 
 class MyDb:
-    lastBlockHash = 0
-    dataLock = False
+    nextBlockHash = False
 
 try:
     from bitcoinrpc.authproxy import AuthServiceProxy
@@ -36,52 +35,44 @@ twister = AuthServiceProxy(serverUrl)
 
 try:
     db = cPickle.load(open(dbFileName))
-    nextHash = db.lastBlockHash
-    dataLock = db.dataLock
 except:
     db = MyDb()
-    nextHash = twister.getblockhash(0)
-    dataLock = db.dataLock
 
-if not dataLock:
+print "blockchain reading..."
 
-    db.dataLock = True
-    cPickle.dump(db, open(dbFileName, "w"))
+while True:
 
-    print "blockchain reading..."
+    block = twister.getblock(db.nextBlockHash)
 
-    while True:
+    if squattersStopCurrent < 0:
+        break
 
-        block = twister.getblock(nextHash)
-        db.lastBlockHash = block["hash"]
+    blocksInStep = blocksInStep - 1
 
-        if squattersStopCurrent < 0:
-            db.dataLock = False
-            break
+    if blocksInStep < 0:
+        break
 
-        blocksInStep = blocksInStep - 1
+    print "read block", str(block["height"])# + "\r",
 
-        if blocksInStep < 0:
-            db.dataLock = False
-            break
+    squattersStopCurrent = squattersStop
 
-        print "read block", str(block["height"])# + "\r",
+    for u in block["usernames"]:
+        print "follow", u
+        twister.follow(nodeUserName, [u])
+        squattersStopCurrent = squattersStopCurrent - 1
 
-        squattersStopCurrent = squattersStop
+    if block.has_key("nextblockhash"):
 
-        for u in block["usernames"]:
-            print "follow", u
-            twister.follow(nodeUserName, [u])
-            squattersStopCurrent = squattersStopCurrent - 1
-        if block.has_key("nextblockhash"):
-            nextHash = block["nextblockhash"]
-        else:
-            print "database is up to date..."
-            break
+        db.nextBlockHash = block["nextblockhash"]
 
-    cPickle.dump(db, open(dbFileName, "w"))
+        print "save block state."
+        cPickle.dump(db, open(dbFileName, "w"))
 
-    print "task completed."
+    else:
+        print "database is up to date..."
+        break
+
+print "task completed."
 
 else:
     print "operation locked by the running process."
